@@ -1,1 +1,690 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#FBF7F0">
+<title>Səsim</title>
+<style>
+  :root{
+    --bg:#FBF7F0;
+    --surface:#FFFFFF;
+    --ink:#2A2A3C;
+    --ink-soft:#6B6B7B;
+    --line:#ECE6DB;
+    --shadow:0 4px 14px rgba(60,50,40,.10);
+    --shadow-lg:0 10px 30px rgba(60,50,40,.18);
+    /* category colors */
+    --c-wants:#FF8A5B;
+    --c-food:#F2B01E;
+    --c-feelings:#5B8DEF;
+    --c-people:#F07EB5;
+    --c-activities:#3FB07A;
+    --c-body:#E0607E;
+    --c-yesno:#27B7B0;
+    --c-fav:#FFC93C;
+    --radius:22px;
+    --tap:#0001;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;
+    min-height:100dvh;
+    overscroll-behavior:none;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;top:0;z-index:30;
+    background:var(--bg);
+    padding:calc(env(safe-area-inset-top) + 10px) 12px 8px;
+    border-bottom:1px solid var(--line);
+  }
+  .topbar{display:flex;align-items:center;gap:10px;}
+  .brand{display:flex;align-items:center;gap:8px;margin-right:auto;}
+  .brand .logo{
+    width:34px;height:34px;border-radius:12px;
+    background:linear-gradient(135deg,var(--c-wants),var(--c-people));
+    display:grid;place-items:center;color:#fff;font-size:18px;font-weight:800;
+    box-shadow:var(--shadow);
+  }
+  .brand h1{font-size:20px;margin:0;font-weight:800;letter-spacing:-.3px;}
+  .seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;box-shadow:var(--shadow);}
+  .seg button{
+    padding:7px 11px;border-radius:999px;font-weight:700;font-size:13px;color:var(--ink-soft);min-width:40px;
+  }
+  .seg button.active{background:var(--ink);color:#fff;}
+  .gear{
+    width:42px;height:42px;border-radius:14px;background:var(--surface);border:1px solid var(--line);
+    box-shadow:var(--shadow);font-size:20px;display:grid;place-items:center;
+  }
+
+  /* ---------- SENTENCE BAR ---------- */
+  .sentence{
+    display:flex;align-items:center;gap:8px;margin-top:10px;
+  }
+  .strip{
+    flex:1;display:flex;gap:8px;overflow-x:auto;padding:8px;min-height:74px;
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    box-shadow:inset 0 1px 3px #0000000a;scrollbar-width:none;
+  }
+  .strip::-webkit-scrollbar{display:none;}
+  .strip:empty::before{
+    content:attr(data-empty);color:var(--ink-soft);font-size:14px;font-weight:600;
+    display:flex;align-items:center;padding-left:6px;opacity:.7;
+  }
+  .schip{
+    flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    width:62px;height:58px;border-radius:14px;background:var(--bg);border:1.5px solid var(--line);
+    font-size:24px;line-height:1;position:relative;
+  }
+  .schip span{font-size:9px;font-weight:700;margin-top:3px;max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .schip img{width:30px;height:30px;object-fit:cover;border-radius:7px;}
+  .sbtn{
+    flex:0 0 auto;width:58px;height:58px;border-radius:18px;display:grid;place-items:center;
+    font-size:24px;color:#fff;box-shadow:var(--shadow);transition:transform .08s;
+  }
+  .sbtn:active{transform:scale(.93);}
+  .sbtn.play{background:linear-gradient(135deg,var(--c-activities),#2E9B68);width:64px;height:64px;font-size:28px;}
+  .sbtn.back{background:#C9A24B;}
+  .sbtn.clear{background:#D86F6F;}
+
+  /* ---------- TABS ---------- */
+  .tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 12px 4px;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    flex:0 0 auto;padding:9px 15px;border-radius:999px;background:var(--surface);
+    border:2px solid var(--line);font-weight:700;font-size:14px;color:var(--ink-soft);
+    display:flex;align-items:center;gap:6px;white-space:nowrap;transition:all .12s;
+  }
+  .tab .dot{width:12px;height:12px;border-radius:50%;background:var(--tabc,#ccc);}
+  .tab.active{color:#fff;background:var(--tabc);border-color:var(--tabc);box-shadow:var(--shadow);}
+  .tab.active .dot{background:#fff;}
+
+  /* ---------- GRID ---------- */
+  main{flex:1;padding:12px 12px 28px;}
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:12px;
+  }
+  .card{
+    position:relative;background:var(--surface);border-radius:var(--radius);
+    border:2px solid var(--line);border-bottom:6px solid var(--cardc,var(--line));
+    box-shadow:var(--shadow);padding:14px 8px 12px;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    aspect-ratio:1/1.08;transition:transform .08s,box-shadow .12s;
+  }
+  .card:active{transform:scale(.95);box-shadow:var(--shadow-lg);}
+  .card .emoji{font-size:46px;line-height:1;}
+  .card img.photo{width:62px;height:62px;object-fit:cover;border-radius:14px;}
+  .card .label{font-size:15px;font-weight:800;text-align:center;line-height:1.15;color:var(--ink);}
+  .star{
+    position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;
+    display:grid;place-items:center;font-size:16px;background:#fff8;color:#cfc4ad;
+    border:1px solid var(--line);
+  }
+  .star.on{color:var(--c-fav);background:#fff;}
+  .del{
+    position:absolute;top:6px;left:6px;width:28px;height:28px;border-radius:50%;
+    background:#D86F6F;color:#fff;font-size:16px;font-weight:800;display:none;place-items:center;
+    box-shadow:var(--shadow);
+  }
+  body.parent .card[data-custom="1"] .del{display:grid;}
+  .empty-note{text-align:center;color:var(--ink-soft);padding:50px 20px;font-weight:600;}
+
+  /* ---------- ADD CARD (in grid) ---------- */
+  .card.add{
+    background:repeating-linear-gradient(135deg,#fff,#fff 10px,#faf6ee 10px,#faf6ee 20px);
+    border:2px dashed #d8cdb6;border-bottom:2px dashed #d8cdb6;
+    color:var(--ink-soft);display:none;
+  }
+  body.parent .card.add{display:flex;}
+  .card.add .emoji{font-size:40px;color:var(--c-activities);}
+
+  /* ---------- SHEETS / MODALS ---------- */
+  .scrim{
+    position:fixed;inset:0;background:#0007;z-index:50;display:none;
+    align-items:flex-end;justify-content:center;
+  }
+  .scrim.show{display:flex;}
+  .sheet{
+    width:100%;max-width:520px;background:var(--surface);border-radius:24px 24px 0 0;
+    padding:18px 18px calc(env(safe-area-inset-bottom) + 22px);
+    box-shadow:var(--shadow-lg);max-height:88dvh;overflow-y:auto;
+    animation:rise .22s ease;
+  }
+  @keyframes rise{from{transform:translateY(40px);opacity:.4;}to{transform:none;opacity:1;}}
+  .sheet h2{margin:2px 0 14px;font-size:20px;font-weight:800;}
+  .sheet .grab{width:42px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 14px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;font-weight:800;color:var(--ink-soft);margin-bottom:6px;}
+  .field input,.field select{
+    width:100%;padding:13px 14px;border-radius:14px;border:2px solid var(--line);
+    background:var(--bg);font-size:16px;font-family:inherit;color:var(--ink);font-weight:600;
+  }
+  .field input:focus,.field select:focus{outline:none;border-color:var(--c-feelings);}
+  .row{display:flex;gap:10px;}
+  .row>*{flex:1;}
+  .preview{
+    width:74px;height:74px;border-radius:16px;border:2px solid var(--line);background:var(--bg);
+    display:grid;place-items:center;font-size:40px;overflow:hidden;
+  }
+  .preview img{width:100%;height:100%;object-fit:cover;}
+  .btn-primary{
+    width:100%;padding:15px;border-radius:16px;background:var(--c-activities);color:#fff;
+    font-size:17px;font-weight:800;box-shadow:var(--shadow);
+  }
+  .btn-ghost{width:100%;padding:13px;border-radius:16px;background:var(--bg);border:2px solid var(--line);font-weight:800;color:var(--ink-soft);}
+  .settings-block{padding:12px 0;border-top:1px solid var(--line);}
+  .settings-block .lbl{font-size:13px;font-weight:800;color:var(--ink-soft);margin-bottom:8px;}
+  .toggle{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:14px;border-radius:16px;background:var(--bg);border:2px solid var(--line);
+  }
+  .toggle .sw{width:52px;height:30px;border-radius:999px;background:#d8cdb6;position:relative;transition:.18s;flex:0 0 auto;}
+  .toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.18s;box-shadow:0 1px 3px #0003;}
+  .toggle.on .sw{background:var(--c-activities);}
+  .toggle.on .sw::after{left:25px;}
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.4;}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    text-align:center;padding:16px 12px calc(env(safe-area-inset-bottom) + 16px);
+    color:var(--ink-soft);font-size:13px;border-top:1px solid var(--line);
+  }
+  footer a{color:var(--c-people);font-weight:800;text-decoration:none;}
+
+  @media(min-width:560px){
+    .grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+    .card .emoji{font-size:54px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">S</div>
+      <h1>Səsim</h1>
+    </div>
+    <div class="seg" id="speechSeg" aria-label="Səsləndirmə dili">
+      <button data-lang="az" class="active">AZ</button>
+      <button data-lang="ru">RU</button>
+      <button data-lang="en">EN</button>
+    </div>
+    <button class="gear" id="gearBtn" aria-label="Tənzimləmələr">⚙️</button>
+  </div>
+
+  <div class="sentence">
+    <div class="strip" id="strip" data-empty="Kartlara toxun…"></div>
+    <button class="sbtn back" id="backBtn" aria-label="Sil">⌫</button>
+    <button class="sbtn clear" id="clearBtn" aria-label="Təmizlə">🗑️</button>
+    <button class="sbtn play" id="playBtn" aria-label="Səsləndir">🔊</button>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  Səsim · <a href="https://instagram.com/s_akhundoff" target="_blank" rel="noopener">@s_akhundoff</a>
+</footer>
+
+<!-- SETTINGS SHEET -->
+<div class="scrim" id="settingsScrim">
+  <div class="sheet" id="settingsSheet">
+    <div class="grab"></div>
+    <h2 id="t_settings">Tənzimləmələr</h2>
+
+    <div class="settings-block" style="border-top:none;">
+      <div class="lbl" id="t_uiLang">İnterfeys dili</div>
+      <div class="seg" id="uiSeg" style="width:100%;justify-content:space-between;">
+        <button data-lang="az" class="active" style="flex:1;">Azərbaycan</button>
+        <button data-lang="ru" style="flex:1;">Русский</button>
+        <button data-lang="en" style="flex:1;">English</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="lbl" id="t_speechLang">Səsləndirmə dili</div>
+      <div class="seg" id="speechSeg2" style="width:100%;justify-content:space-between;">
+        <button data-lang="az" class="active" style="flex:1;">AZ 🔊</button>
+        <button data-lang="ru" style="flex:1;">RU 🔊</button>
+        <button data-lang="en" style="flex:1;">EN 🔊</button>
+      </div>
+    </div>
+
+    <div class="settings-block">
+      <div class="toggle" id="parentToggle">
+        <div>
+          <div style="font-weight:800;" id="t_parent">Valideyn rejimi</div>
+          <div class="hint" id="t_parentHint">Yeni kart əlavə et və kartları sil.</div>
+        </div>
+        <div class="sw"></div>
+      </div>
+    </div>
+
+    <button class="btn-ghost" id="closeSettings" style="margin-top:6px;" >Bağla</button>
+  </div>
+</div>
+
+<!-- ADD CARD SHEET -->
+<div class="scrim" id="addScrim">
+  <div class="sheet" id="addSheet">
+    <div class="grab"></div>
+    <h2 id="t_newcard">Yeni kart</h2>
+
+    <div class="row" style="align-items:center;margin-bottom:14px;">
+      <div class="preview" id="addPreview">🙂</div>
+      <div style="flex:2;">
+        <div class="field" style="margin-bottom:8px;">
+          <label id="t_emoji">Emoji</label>
+          <input id="addEmoji" maxlength="4" placeholder="🙂" value="🙂">
+        </div>
+        <label class="btn-ghost" style="display:block;text-align:center;padding:10px;font-size:14px;" id="t_photo">
+          📷 Şəkil seç
+          <input type="file" id="addPhoto" accept="image/*" hidden>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label id="t_cat">Kateqoriya</label>
+      <select id="addCat"></select>
+    </div>
+    <div class="field">
+      <label>Azərbaycan dilində</label>
+      <input id="addAz" placeholder="məs: Su istəyirəm">
+    </div>
+    <div class="field">
+      <label>На русском</label>
+      <input id="addRu" placeholder="напр: Хочу воду">
+    </div>
+    <div class="field">
+      <label>In English</label>
+      <input id="addEn" placeholder="e.g: I want water">
+    </div>
+
+    <button class="btn-primary" id="saveCard" style="margin-bottom:10px;">Yadda saxla</button>
+    <button class="btn-ghost" id="cancelAdd">Ləğv et</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SƏSİM — 3 dilli AAC ünsiyyət lövhəsi
+   Tək fayl · localStorage · offline · @s_akhundoff
+   ============================================================ */
+
+/* ---------- İnterfeys mətnləri ---------- */
+const I18N = {
+  az:{settings:"Tənzimləmələr",uiLang:"İnterfeys dili",speechLang:"Səsləndirmə dili",parent:"Valideyn rejimi",parentHint:"Yeni kart əlavə et və kartları sil.",close:"Bağla",newcard:"Yeni kart",emoji:"Emoji",photo:"📷 Şəkil seç",cat:"Kateqoriya",save:"Yadda saxla",cancel:"Ləğv et",empty:"Kartlara toxun…",noFav:"Hələ sevimli kart yoxdur. Kartın üstündəki ⭐ ilə əlavə et.",delConfirm:"Bu kart silinsin?"},
+  ru:{settings:"Настройки",uiLang:"Язык интерфейса",speechLang:"Язык озвучивания",parent:"Режим родителя",parentHint:"Добавляйте и удаляйте карточки.",close:"Закрыть",newcard:"Новая карточка",emoji:"Эмодзи",photo:"📷 Выбрать фото",cat:"Категория",save:"Сохранить",cancel:"Отмена",empty:"Нажмите на карточки…",noFav:"Пока нет избранных. Добавьте через ⭐ на карточке.",delConfirm:"Удалить эту карточку?"},
+  en:{settings:"Settings",uiLang:"Interface language",speechLang:"Voice language",parent:"Parent mode",parentHint:"Add and remove cards.",close:"Close",newcard:"New card",emoji:"Emoji",photo:"📷 Choose photo",cat:"Category",save:"Save",cancel:"Cancel",empty:"Tap the cards…",noFav:"No favorites yet. Add with the ⭐ on a card.",delConfirm:"Delete this card?"}
+};
+
+/* ---------- Kateqoriyalar ---------- */
+const CATEGORIES = [
+  {id:"favorites",  color:"var(--c-fav)",        icon:"⭐", name:{az:"Sevimlilər",ru:"Избранное",en:"Favorites"}},
+  {id:"wants",      color:"var(--c-wants)",      icon:"🙏", name:{az:"İstəklər",ru:"Желания",en:"Wants"}},
+  {id:"food",       color:"var(--c-food)",       icon:"🍽️", name:{az:"Yemək/İçki",ru:"Еда/Питьё",en:"Food/Drink"}},
+  {id:"feelings",   color:"var(--c-feelings)",   icon:"😊", name:{az:"Hisslər",ru:"Чувства",en:"Feelings"}},
+  {id:"people",     color:"var(--c-people)",     icon:"👨‍👩‍👧", name:{az:"İnsanlar",ru:"Люди",en:"People"}},
+  {id:"activities", color:"var(--c-activities)", icon:"🧸", name:{az:"Fəaliyyətlər",ru:"Действия",en:"Activities"}},
+  {id:"body",       color:"var(--c-body)",       icon:"🤕", name:{az:"Bədən/Ağrı",ru:"Тело/Боль",en:"Body/Pain"}},
+  {id:"yesno",      color:"var(--c-yesno)",      icon:"✅", name:{az:"Hə/Yox",ru:"Да/Нет",en:"Yes/No"}}
+];
+
+/* ---------- Defolt kartlar ---------- */
+/* audio: {az:null,ru:null,en:null} — AZ üçün əvvəlcədən yazılmış fayl yolu əlavə oluna bilər */
+const DEFAULT_CARDS = [
+  // İstəklər
+  {id:"w1",cat:"wants",emoji:"🙏",t:{az:"İstəyirəm",ru:"Хочу",en:"I want"}},
+  {id:"w2",cat:"wants",emoji:"➕",t:{az:"Daha çox",ru:"Ещё",en:"More"}},
+  {id:"w3",cat:"wants",emoji:"✋",t:{az:"Bitdi",ru:"Готово",en:"Finished"}},
+  {id:"w4",cat:"wants",emoji:"🆘",t:{az:"Kömək",ru:"Помоги",en:"Help"}},
+  {id:"w5",cat:"wants",emoji:"🛑",t:{az:"Dayan",ru:"Стоп",en:"Stop"}},
+  {id:"w6",cat:"wants",emoji:"🚽",t:{az:"Tualet",ru:"Туалет",en:"Toilet"}},
+  {id:"w7",cat:"wants",emoji:"🤲",t:{az:"Ver",ru:"Дай",en:"Give"}},
+  // Yemək/İçki
+  {id:"f1",cat:"food",emoji:"💧",t:{az:"Su",ru:"Вода",en:"Water"}},
+  {id:"f2",cat:"food",emoji:"🍽️",t:{az:"Yemək",ru:"Еда",en:"Food"}},
+  {id:"f3",cat:"food",emoji:"🍞",t:{az:"Çörək",ru:"Хлеб",en:"Bread"}},
+  {id:"f4",cat:"food",emoji:"🥛",t:{az:"Süd",ru:"Молоко",en:"Milk"}},
+  {id:"f5",cat:"food",emoji:"🍎",t:{az:"Alma",ru:"Яблоко",en:"Apple"}},
+  {id:"f6",cat:"food",emoji:"🧃",t:{az:"Şirə",ru:"Сок",en:"Juice"}},
+  {id:"f7",cat:"food",emoji:"🍪",t:{az:"Peçenye",ru:"Печенье",en:"Cookie"}},
+  // Hisslər
+  {id:"e1",cat:"feelings",emoji:"😊",t:{az:"Xoşbəxt",ru:"Счастлив",en:"Happy"}},
+  {id:"e2",cat:"feelings",emoji:"😢",t:{az:"Kədərli",ru:"Грустно",en:"Sad"}},
+  {id:"e3",cat:"feelings",emoji:"😠",t:{az:"Əsəbi",ru:"Злюсь",en:"Angry"}},
+  {id:"e4",cat:"feelings",emoji:"😴",t:{az:"Yorğun",ru:"Устал",en:"Tired"}},
+  {id:"e5",cat:"feelings",emoji:"😨",t:{az:"Qorxuram",ru:"Боюсь",en:"Scared"}},
+  {id:"e6",cat:"feelings",emoji:"❤️",t:{az:"Sevirəm",ru:"Люблю",en:"I love"}},
+  {id:"e7",cat:"feelings",emoji:"🤒",t:{az:"Xəstəyəm",ru:"Болею",en:"Sick"}},
+  // İnsanlar
+  {id:"p1",cat:"people",emoji:"👩",t:{az:"Ana",ru:"Мама",en:"Mom"}},
+  {id:"p2",cat:"people",emoji:"👨",t:{az:"Ata",ru:"Папа",en:"Dad"}},
+  {id:"p3",cat:"people",emoji:"🙋",t:{az:"Mən",ru:"Я",en:"Me"}},
+  {id:"p4",cat:"people",emoji:"👩‍🏫",t:{az:"Müəllim",ru:"Учитель",en:"Teacher"}},
+  {id:"p5",cat:"people",emoji:"🧒",t:{az:"Dost",ru:"Друг",en:"Friend"}},
+  {id:"p6",cat:"people",emoji:"👨‍⚕️",t:{az:"Həkim",ru:"Врач",en:"Doctor"}},
+  {id:"p7",cat:"people",emoji:"👵",t:{az:"Nənə",ru:"Бабушка",en:"Grandma"}},
+  // Fəaliyyətlər
+  {id:"a1",cat:"activities",emoji:"🧸",t:{az:"Oynamaq",ru:"Играть",en:"Play"}},
+  {id:"a2",cat:"activities",emoji:"🛏️",t:{az:"Yatmaq",ru:"Спать",en:"Sleep"}},
+  {id:"a3",cat:"activities",emoji:"📖",t:{az:"Oxumaq",ru:"Читать",en:"Read"}},
+  {id:"a4",cat:"activities",emoji:"🚶",t:{az:"Gəzmək",ru:"Гулять",en:"Walk"}},
+  {id:"a5",cat:"activities",emoji:"📺",t:{az:"Baxmaq",ru:"Смотреть",en:"Watch"}},
+  {id:"a6",cat:"activities",emoji:"🎨",t:{az:"Çəkmək",ru:"Рисовать",en:"Draw"}},
+  {id:"a7",cat:"activities",emoji:"🎵",t:{az:"Musiqi",ru:"Музыка",en:"Music"}},
+  // Bədən/Ağrı
+  {id:"b1",cat:"body",emoji:"😣",t:{az:"Ağrıyır",ru:"Болит",en:"It hurts"}},
+  {id:"b2",cat:"body",emoji:"🤕",t:{az:"Baş",ru:"Голова",en:"Head"}},
+  {id:"b3",cat:"body",emoji:"🤢",t:{az:"Qarın",ru:"Живот",en:"Stomach"}},
+  {id:"b4",cat:"body",emoji:"🥵",t:{az:"İsti",ru:"Жарко",en:"Hot"}},
+  {id:"b5",cat:"body",emoji:"🥶",t:{az:"Soyuq",ru:"Холодно",en:"Cold"}},
+  {id:"b6",cat:"body",emoji:"✋",t:{az:"Əl",ru:"Рука",en:"Hand"}},
+  {id:"b7",cat:"body",emoji:"🦷",t:{az:"Diş",ru:"Зуб",en:"Tooth"}},
+  // Hə/Yox
+  {id:"y1",cat:"yesno",emoji:"✅",t:{az:"Hə",ru:"Да",en:"Yes"}},
+  {id:"y2",cat:"yesno",emoji:"❌",t:{az:"Yox",ru:"Нет",en:"No"}},
+  {id:"y3",cat:"yesno",emoji:"🤔",t:{az:"Bəlkə",ru:"Может быть",en:"Maybe"}},
+  {id:"y4",cat:"yesno",emoji:"🙏",t:{az:"Zəhmət olmasa",ru:"Пожалуйста",en:"Please"}},
+  {id:"y5",cat:"yesno",emoji:"💛",t:{az:"Sağ ol",ru:"Спасибо",en:"Thank you"}},
+  {id:"y6",cat:"yesno",emoji:"👋",t:{az:"Salam",ru:"Привет",en:"Hello"}},
+  {id:"y7",cat:"yesno",emoji:"👋",t:{az:"Sağ ol, görüşənədək",ru:"Пока",en:"Bye"}}
+];
+
+const CAT_COLOR = Object.fromEntries(CATEGORIES.map(c=>[c.id,c.color]));
+const LANG_CODE = {az:"az-AZ",ru:"ru-RU",en:"en-US"};
+
+/* ---------- State ---------- */
+const LS = "sesim_v1";
+let state = {
+  uiLang:"az",
+  speechLang:"az",
+  favorites:[],
+  customCards:[],
+  currentCat:"wants"
+};
+let sentence = [];      // seçilmiş kartlar (sessiya)
+let parentMode = false; // sessiya — yenidən açılanda söndürülür
+
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(LS));
+    if(s){
+      state.uiLang = s.uiLang||"az";
+      state.speechLang = s.speechLang||"az";
+      state.favorites = s.favorites||[];
+      state.customCards = s.customCards||[];
+    }
+  }catch(e){}
+}
+function save(){
+  localStorage.setItem(LS, JSON.stringify({
+    uiLang:state.uiLang, speechLang:state.speechLang,
+    favorites:state.favorites, customCards:state.customCards
+  }));
+}
+
+/* ---------- Köməkçilər ---------- */
+const $ = s=>document.querySelector(s);
+const allCards = ()=>[...DEFAULT_CARDS, ...state.customCards];
+const T = ()=>I18N[state.uiLang];
+
+/* ---------- Səsləndirmə ---------- */
+let voices = [];
+function loadVoices(){ voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; }
+if('speechSynthesis' in window){
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+}
+function speak(text, lang, audioPath){
+  if(audioPath){ // əvvəlcədən yazılmış fayl üstünlükdür (xüsusilə AZ)
+    try{ const a=new Audio(audioPath); a.play(); return; }catch(e){}
+  }
+  if(!text || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = LANG_CODE[lang]||"en-US";
+  u.rate = 0.92;
+  const v = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith(lang));
+  if(v) u.voice = v;
+  window.speechSynthesis.speak(u);
+}
+function speakCard(card){
+  const lang = state.speechLang;
+  const audio = card.audio && card.audio[lang];
+  speak(card.t[lang], lang, audio);
+}
+function speakSentence(){
+  if(!sentence.length) return;
+  const lang = state.speechLang;
+  const text = sentence.map(c=>c.t[lang]).join(" ");
+  speak(text, lang, null);
+}
+
+/* ---------- Render: Tabs ---------- */
+function renderTabs(){
+  const el = $("#tabs"); el.innerHTML="";
+  CATEGORIES.forEach(c=>{
+    const b=document.createElement("button");
+    b.className="tab"+(c.id===state.currentCat?" active":"");
+    b.style.setProperty("--tabc", c.color);
+    b.innerHTML=`<span class="dot"></span>${c.icon} ${c.name[state.uiLang]}`;
+    b.onclick=()=>{ state.currentCat=c.id; renderTabs(); renderGrid(); };
+    el.appendChild(b);
+  });
+}
+
+/* ---------- Render: Grid ---------- */
+function renderGrid(){
+  const grid = $("#grid"); grid.innerHTML="";
+  let cards;
+  if(state.currentCat==="favorites"){
+    cards = allCards().filter(c=>state.favorites.includes(c.id));
+    if(!cards.length){
+      grid.innerHTML = `<div class="empty-note" style="grid-column:1/-1;">${T().noFav}</div>`;
+      return;
+    }
+  } else {
+    cards = allCards().filter(c=>c.cat===state.currentCat);
+  }
+
+  cards.forEach(card=>{
+    const el=document.createElement("button");
+    el.className="card";
+    el.style.setProperty("--cardc", CAT_COLOR[card.cat]||"var(--line)");
+    if(card.custom) el.dataset.custom="1";
+
+    const visual = card.img
+      ? `<img class="photo" src="${card.img}" alt="">`
+      : `<div class="emoji">${card.emoji||"🙂"}</div>`;
+    const isFav = state.favorites.includes(card.id);
+
+    el.innerHTML = `
+      ${visual}
+      <div class="label">${card.t[state.uiLang]||card.t.az||""}</div>
+      <div class="star ${isFav?'on':''}" role="button" aria-label="Sevimli">${isFav?'⭐':'☆'}</div>
+      <div class="del" role="button" aria-label="Sil">×</div>`;
+
+    // əsas toxunma → söz səsləndir + cümləyə əlavə
+    el.onclick=(e)=>{
+      if(e.target.closest(".star")){ toggleFav(card.id); return; }
+      if(e.target.closest(".del")){ deleteCard(card.id); return; }
+      speakCard(card);
+      sentence.push(card);
+      renderSentence();
+    };
+    grid.appendChild(el);
+  });
+
+  // "Yeni kart" düyməsi (yalnız favorites deyil + valideyn rejimində görünür)
+  if(state.currentCat!=="favorites"){
+    const add=document.createElement("button");
+    add.className="card add";
+    add.innerHTML=`<div class="emoji">＋</div><div class="label">${T().newcard}</div>`;
+    add.onclick=openAddSheet;
+    grid.appendChild(add);
+  }
+}
+
+/* ---------- Render: Sentence strip ---------- */
+function renderSentence(){
+  const strip=$("#strip"); strip.innerHTML="";
+  strip.dataset.empty = T().empty;
+  sentence.forEach((card,i)=>{
+    const chip=document.createElement("button");
+    chip.className="schip";
+    const visual = card.img ? `<img src="${card.img}" alt="">` : (card.emoji||"🙂");
+    chip.innerHTML=`${visual}<span>${card.t[state.uiLang]||""}</span>`;
+    chip.onclick=()=>{ sentence.splice(i,1); renderSentence(); };
+    strip.appendChild(chip);
+  });
+}
+
+/* ---------- Sevimlilər ---------- */
+function toggleFav(id){
+  const i=state.favorites.indexOf(id);
+  if(i>-1) state.favorites.splice(i,1); else state.favorites.push(id);
+  save(); renderGrid();
+}
+
+/* ---------- Kart silmə (yalnız custom) ---------- */
+function deleteCard(id){
+  if(!confirm(T().delConfirm)) return;
+  state.customCards = state.customCards.filter(c=>c.id!==id);
+  state.favorites = state.favorites.filter(f=>f!==id);
+  sentence = sentence.filter(c=>c.id!==id);
+  save(); renderGrid(); renderSentence();
+}
+
+/* ---------- İnterfeys dili tətbiqi ---------- */
+function applyUiLang(){
+  document.documentElement.lang = state.uiLang;
+  const t=T();
+  $("#t_settings").textContent=t.settings;
+  $("#t_uiLang").textContent=t.uiLang;
+  $("#t_speechLang").textContent=t.speechLang;
+  $("#t_parent").textContent=t.parent;
+  $("#t_parentHint").textContent=t.parentHint;
+  $("#closeSettings").textContent=t.close;
+  $("#t_newcard").textContent=t.newcard;
+  $("#t_emoji").textContent=t.emoji;
+  $("#t_photo").firstChild.textContent=t.photo+" ";
+  $("#t_cat").textContent=t.cat;
+  $("#saveCard").textContent=t.save;
+  $("#cancelAdd").textContent=t.cancel;
+}
+
+/* ---------- Segment kontrolları ---------- */
+function setSeg(seg, lang){
+  seg.querySelectorAll("button").forEach(b=>b.classList.toggle("active", b.dataset.lang===lang));
+}
+function bindSeg(sel, key, after){
+  $(sel).querySelectorAll("button").forEach(b=>{
+    b.onclick=()=>{ state[key]=b.dataset.lang; save(); after(); };
+  });
+}
+
+/* ---------- Add card sheet ---------- */
+let addImg = null;
+function fillCatSelect(){
+  const sel=$("#addCat"); sel.innerHTML="";
+  CATEGORIES.filter(c=>c.id!=="favorites").forEach(c=>{
+    const o=document.createElement("option");
+    o.value=c.id; o.textContent=`${c.icon} ${c.name[state.uiLang]}`;
+    sel.appendChild(o);
+  });
+  sel.value = state.currentCat==="favorites" ? "wants" : state.currentCat;
+}
+function openAddSheet(){
+  addImg=null;
+  $("#addEmoji").value="🙂"; $("#addPreview").textContent="🙂";
+  $("#addAz").value=""; $("#addRu").value=""; $("#addEn").value="";
+  fillCatSelect();
+  $("#addScrim").classList.add("show");
+}
+function closeAddSheet(){ $("#addScrim").classList.remove("show"); }
+
+$("#addEmoji").oninput=e=>{
+  if(!addImg){ $("#addPreview").textContent=e.target.value||"🙂"; }
+};
+$("#addPhoto").onchange=e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=()=>{ addImg=r.result; $("#addPreview").innerHTML=`<img src="${addImg}" alt="">`; };
+  r.readAsDataURL(file);
+};
+$("#saveCard").onclick=()=>{
+  const az=$("#addAz").value.trim();
+  const ru=$("#addRu").value.trim();
+  const en=$("#addEn").value.trim();
+  if(!az && !ru && !en){ alert("Ən azı bir dildə mətn yazın."); return; }
+  const card={
+    id:"c"+Date.now(),
+    cat:$("#addCat").value,
+    custom:true,
+    emoji: addImg? "" : ($("#addEmoji").value||"🙂"),
+    img: addImg||null,
+    t:{az:az||ru||en, ru:ru||az||en, en:en||az||ru},
+    audio:{az:null,ru:null,en:null}
+  };
+  state.customCards.push(card);
+  save();
+  closeAddSheet();
+  state.currentCat=card.cat; renderTabs(); renderGrid();
+};
+$("#cancelAdd").onclick=closeAddSheet;
+
+/* ---------- Settings sheet ---------- */
+$("#gearBtn").onclick=()=>{ $("#settingsScrim").classList.add("show"); };
+$("#closeSettings").onclick=()=>{ $("#settingsScrim").classList.remove("show"); };
+$("#parentToggle").onclick=()=>{
+  parentMode=!parentMode;
+  document.body.classList.toggle("parent", parentMode);
+  $("#parentToggle").classList.toggle("on", parentMode);
+  renderGrid();
+};
+
+/* scrim kənarına toxunanda bağla */
+document.querySelectorAll(".scrim").forEach(s=>{
+  s.addEventListener("click",e=>{ if(e.target===s) s.classList.remove("show"); });
+});
+
+/* ---------- Sentence düymələri ---------- */
+$("#playBtn").onclick=speakSentence;
+$("#backBtn").onclick=()=>{ sentence.pop(); renderSentence(); };
+$("#clearBtn").onclick=()=>{ sentence=[]; renderSentence(); };
+
+/* ---------- Init ---------- */
+function init(){
+  load();
+  setSeg($("#speechSeg"), state.speechLang);
+  setSeg($("#speechSeg2"), state.speechLang);
+  setSeg($("#uiSeg"), state.uiLang);
+
+  bindSeg("#speechSeg","speechLang",()=>{ setSeg($("#speechSeg2"),state.speechLang); });
+  bindSeg("#speechSeg2","speechLang",()=>{ setSeg($("#speechSeg"),state.speechLang); });
+  bindSeg("#uiSeg","uiLang",()=>{ setSeg($("#uiSeg"),state.uiLang); applyUiLang(); renderTabs(); renderGrid(); renderSentence(); });
+
+  applyUiLang();
+  renderTabs();
+  renderGrid();
+  renderSentence();
+}
+init();
+</script>
+</body>
+</html>
