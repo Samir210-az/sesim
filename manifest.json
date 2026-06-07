@@ -1,0 +1,17 @@
+{
+  "name": "Səsim — AAC ünsiyyət lövhəsi",
+  "short_name": "Səsim",
+  "description": "Danışa bilməyən və nitq gecikməsi olan uşaqlar üçün şəkilli ünsiyyət lövhəsi. AN Psixoloji Dəstək və Reabilitasiya Mərkəzi.",
+  "lang": "az",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFF6EA",
+  "theme_color": "#FFF6EA",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
