@@ -612,7 +612,40 @@ function speak(text,lang,audioPath){
 // AZ üçün əvvəlcədən yazılmış audio: fayl adı = kart id-si. Yalnız hazır kartlar (custom yox).
 function azAudio(card){ return (state.speechLang==="az" && !card.custom) ? ("audio/az/"+card.id+".mp3") : null; }
 function speakCard(card){const lang=state.speechLang;speak(card.t[lang],lang,(card.audio&&card.audio[lang])||azAudio(card));}
-function speakSentence(){if(!sentence.length)return;const lang=state.speechLang;speak(sentence.map(c=>c.t[lang]).join(" "),lang,null);}
+function ttsThen(text,lang,cb){
+  if(!text||!('speechSynthesis'in window)){if(cb)cb();return;}
+  const u=new SpeechSynthesisUtterance(text);
+  const v=pickVoice(lang);
+  if(v){u.voice=v;u.lang=v.lang;}else{u.lang=LANG_CODE[lang]||"en-US";}
+  u.rate=0.9;u.pitch=1.05;
+  let called=false;const go=()=>{if(called)return;called=true;if(cb)cb();};
+  u.onend=go;u.onerror=go;
+  window.speechSynthesis.speak(u);
+}
+function speakSentence(){
+  if(!sentence.length)return;
+  const lang=state.speechLang;
+  if('speechSynthesis'in window)window.speechSynthesis.cancel();
+  // AZ: 🔊 ilə cümlə inteqrasiya olunmuş audio fayllarla, kart-kart oxunur (Türk TTS deyil)
+  if(lang==="az"){
+    const items=sentence.slice();let i=0;
+    const next=()=>{
+      if(i>=items.length)return;
+      const card=items[i++];const text=card.t[lang]||"";
+      const path=(card.audio&&card.audio[lang])||azAudio(card);
+      if(path){
+        const a=new Audio(path);let done=false;
+        const adv=()=>{if(done)return;done=true;next();};
+        const fb=()=>{if(done)return;done=true;ttsThen(text,lang,next);};
+        a.onended=adv;a.onerror=fb;
+        const p=a.play();if(p&&p.catch)p.catch(fb);
+      }else{ttsThen(text,lang,next);}
+    };
+    next();return;
+  }
+  // RU/EN: bütöv cümlə kimi TTS (əvvəlki davranış)
+  speak(sentence.map(c=>c.t[lang]).join(" "),lang,null);
+}
 
 /* ---------- Render ---------- */
 function renderTabs(){
