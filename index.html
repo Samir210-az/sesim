@@ -247,6 +247,12 @@
         <div class="sw"></div>
       </div>
     </div>
+    <div class="settings-block">
+      <div class="toggle" id="pictoToggle">
+        <div><div style="font-weight:600;">Piktoqram · Пиктограммы · Pictograms</div><div class="hint">ARASAAC peşəkar simvolları (söndürülsə — emoji).</div></div>
+        <div class="sw"></div>
+      </div>
+    </div>
     <button class="btn-ghost" id="closeSettings" style="margin-top:6px;">Bağla</button>
   </div>
 </div>
@@ -525,16 +531,48 @@ const LANG_CODE = {az:"az-AZ",ru:"ru-RU",en:"en-US"};
 const VOICE_PREF = {az:["az","tr"],ru:["ru"],en:["en"]};
 
 const LS="sesim_v1", INTRO_FLAG="sesim_intro_v2";
-let state={uiLang:"az",speechLang:"az",favorites:[],customCards:[],currentCat:"wants"};
+let state={uiLang:"az",speechLang:"az",favorites:[],customCards:[],currentCat:"wants",picto:true};
 let sentence=[], parentMode=false;
 
-function load(){try{const s=JSON.parse(localStorage.getItem(LS));if(s){state.uiLang=s.uiLang||"az";state.speechLang=s.speechLang||"az";state.favorites=s.favorites||[];state.customCards=s.customCards||[];}}catch(e){}}
-function save(){localStorage.setItem(LS,JSON.stringify({uiLang:state.uiLang,speechLang:state.speechLang,favorites:state.favorites,customCards:state.customCards}));}
+function load(){try{const s=JSON.parse(localStorage.getItem(LS));if(s){state.uiLang=s.uiLang||"az";state.speechLang=s.speechLang||"az";state.favorites=s.favorites||[];state.customCards=s.customCards||[];if(typeof s.picto==="boolean")state.picto=s.picto;}}catch(e){}}
+function save(){localStorage.setItem(LS,JSON.stringify({uiLang:state.uiLang,speechLang:state.speechLang,favorites:state.favorites,customCards:state.customCards,picto:state.picto}));}
 
 const $=s=>document.querySelector(s);
 const allCards=()=>[...DEFAULT_CARDS,...state.customCards];
 const T=()=>I18N[state.uiLang];
 function twemojify(root){ if(window.twemoji){ try{ twemoji.parse(root||document.body,{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/'}); }catch(e){} } }
+
+/* ---------- ARASAAC pictograms (progressive enhancement) ---------- */
+const PICTO_LS="sesim_picto_ids";
+let pictoCache={}; try{pictoCache=JSON.parse(localStorage.getItem(PICTO_LS))||{};}catch(e){pictoCache={};}
+function savePictoCache(){try{localStorage.setItem(PICTO_LS,JSON.stringify(pictoCache));}catch(e){}}
+function pictoUrl(id){return "https://static.arasaac.org/pictograms/"+id+"/"+id+"_300.png";}
+async function resolvePicto(word){
+  if(!word)return 0;
+  if(word in pictoCache)return pictoCache[word];           // 0 = bilərəkdən uyğun yoxdur
+  try{
+    const r=await fetch("https://api.arasaac.org/api/pictograms/en/bestsearch/"+encodeURIComponent(word));
+    if(!r.ok)throw 0;
+    const arr=await r.json();
+    const id=(Array.isArray(arr)&&arr.length)?arr[0]._id:0;
+    pictoCache[word]=id; savePictoCache(); return id;       // yalnız cavab gələndə keşlə
+  }catch(e){return 0;}                                      // offline/xəta → keşləmə, sonra yenidən cəhd
+}
+function applyPicto(el,id){
+  const wrap=el.querySelector(".iconwrap"); if(!wrap)return;
+  const pre=new Image();                                    // yükləndikdən sonra dəyiş (broken-image flash olmasın)
+  pre.onload=()=>{ if(state.picto&&el.dataset.en) wrap.innerHTML='<img class="photo" src="'+pictoUrl(id)+'" alt="">'; };
+  pre.src=pictoUrl(id);
+}
+async function enhancePictos(root){
+  if(!state.picto)return;
+  const els=(root||document).querySelectorAll('.card[data-en]:not([data-photo]):not(.add)');
+  for(const el of els){
+    if(!el.dataset.en)continue;
+    const id=await resolvePicto(el.dataset.en);
+    if(id&&state.picto)applyPicto(el,id);
+  }
+}
 
 /* ---------- Səsləndirmə ---------- */
 let voices=[];
@@ -545,8 +583,7 @@ function pickVoice(lang){
   for(const p of prefs){const v=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(p));if(v)return v;}
   return null;
 }
-function speak(text,lang,audioPath){
-  if(audioPath){try{new Audio(audioPath).play();return;}catch(e){}}
+function speakTTS(text,lang){
   if(!text||!('speechSynthesis'in window))return;
   window.speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text);
@@ -555,7 +592,21 @@ function speak(text,lang,audioPath){
   u.rate=0.9;u.pitch=1.05;
   window.speechSynthesis.speak(u);
 }
-function speakCard(card){const lang=state.speechLang;speak(card.t[lang],lang,card.audio&&card.audio[lang]);}
+function speak(text,lang,audioPath){
+  if(audioPath){
+    try{
+      const a=new Audio(audioPath); let done=false;
+      const fb=()=>{ if(done)return; done=true; speakTTS(text,lang); };  // fayl yoxdursa/səhvdirsə → TTS
+      a.onerror=fb;
+      const p=a.play(); if(p&&p.catch)p.catch(fb);
+      return;
+    }catch(e){}
+  }
+  speakTTS(text,lang);
+}
+// AZ üçün əvvəlcədən yazılmış audio: fayl adı = kart id-si. Yalnız hazır kartlar (custom yox).
+function azAudio(card){ return (state.speechLang==="az" && !card.custom) ? ("audio/az/"+card.id+".mp3") : null; }
+function speakCard(card){const lang=state.speechLang;speak(card.t[lang],lang,(card.audio&&card.audio[lang])||azAudio(card));}
 function speakSentence(){if(!sentence.length)return;const lang=state.speechLang;speak(sentence.map(c=>c.t[lang]).join(" "),lang,null);}
 
 /* ---------- Render ---------- */
@@ -586,6 +637,7 @@ function renderGrid(){
     el.style.setProperty("--cardc",CAT_COLOR[card.cat]||"var(--line)");
     el.style.animationDelay=(idx*28)+"ms";
     if(card.custom)el.dataset.custom="1";
+    el.dataset.en=card.t.en||""; if(card.img)el.dataset.photo="1";
     const visual=card.img?`<img class="photo" src="${card.img}" alt="">`:(card.emoji||"🙂");
     const isFav=state.favorites.includes(card.id);
     el.innerHTML=`<div class="iconwrap">${visual}</div>
@@ -611,6 +663,7 @@ function renderGrid(){
     add.onclick=openAddSheet;grid.appendChild(add);
   }
   twemojify(grid);
+  enhancePictos(grid);
 }
 
 function renderSentence(){
@@ -689,6 +742,7 @@ $("#closeSettings").onclick=()=>$("#settingsScrim").classList.remove("show");
 $("#helpBtn").onclick=()=>$("#helpScrim").classList.add("show");
 $("#h_close").onclick=()=>{$("#helpScrim").classList.remove("show");localStorage.setItem(INTRO_FLAG,"1");};
 $("#parentToggle").onclick=()=>{parentMode=!parentMode;document.body.classList.toggle("parent",parentMode);$("#parentToggle").classList.toggle("on",parentMode);renderGrid();};
+$("#pictoToggle").onclick=()=>{state.picto=!state.picto;save();$("#pictoToggle").classList.toggle("on",state.picto);renderGrid();};
 document.querySelectorAll(".scrim").forEach(s=>s.addEventListener("click",e=>{if(e.target===s)s.classList.remove("show");}));
 
 $("#playBtn").onclick=speakSentence;
@@ -701,6 +755,7 @@ function init(){
   bindLang("#speechSeg");
   bindLang("#langSeg");
   syncSegs();applyUiLang();buildEmojiGrid();renderTabs();renderGrid();renderSentence();
+  $("#pictoToggle").classList.toggle("on",state.picto);
   twemojify(document.body);
   if(!localStorage.getItem(INTRO_FLAG)){$("#helpScrim").classList.add("show");}
 }
