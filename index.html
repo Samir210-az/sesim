@@ -7,7 +7,7 @@
 <title>Səsim · AN Mərkəzi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous"></script>
 <style>
   :root{
@@ -39,7 +39,7 @@
       radial-gradient(120% 80% at 0% 100%, #FFE6F2, transparent 55%),
       var(--bg);
     color:var(--ink);
-    font-family:"Fredoka",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-family:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     -webkit-font-smoothing:antialiased;
     min-height:100dvh;display:flex;flex-direction:column;overscroll-behavior:none;
   }
@@ -59,8 +59,8 @@
   .brand{display:flex;align-items:center;gap:8px;margin-right:auto;min-width:0;}
   .brand .anlogo{height:34px;width:auto;display:block;}
   .brand .title{display:flex;flex-direction:column;line-height:1;min-width:0;}
-  .brand .title b{font-size:20px;font-weight:700;letter-spacing:-.4px;}
-  .brand .title small{font-size:9px;color:var(--ink-soft);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .brand .title b{font-size:24px;font-weight:800;letter-spacing:-.4px;}
+  .brand .title small{font-size:11.5px;color:var(--ink-soft);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
   .seg{display:inline-flex;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:3px;box-shadow:var(--shadow);}
   .seg button{padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px;color:var(--ink-soft);min-width:34px;transition:.15s;}
@@ -119,11 +119,11 @@
   .card.pop{animation:pop .3s ease;}
   .card.speaking{box-shadow:0 0 0 4px color-mix(in srgb,var(--cardc) 55%,transparent),var(--shadow-lg);}
   .iconwrap{
-    width:84px;height:84px;border-radius:50%;background:#fff;display:grid;place-items:center;
+    width:108px;height:108px;border-radius:50%;background:#fff;display:grid;place-items:center;
     box-shadow:0 4px 10px color-mix(in srgb,var(--cardc) 22%,transparent);
-    font-size:46px;
+    font-size:68px;
   }
-  .iconwrap img.photo{width:80px;height:80px;border-radius:50%;object-fit:cover;}
+  .iconwrap img.photo{width:104px;height:104px;border-radius:50%;object-fit:cover;}
   .card .label{font-size:16px;font-weight:600;text-align:center;line-height:1.15;color:#3a3548;padding:0 2px;}
   .card.sent .label{font-size:14px;}
   .star{position:absolute;top:7px;right:7px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:17px;background:#ffffffcc;color:#d8c9a6;border:1.5px solid var(--line);}
@@ -174,9 +174,9 @@
   .help-steps .n{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--c-sentences);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center;}
   .help-by{text-align:center;font-size:12.5px;color:var(--ink-soft);margin:6px 0 14px;font-weight:500;}
 
-  footer{text-align:center;padding:16px 12px calc(env(safe-area-inset-bottom) + 16px);color:var(--ink-soft);font-size:13px;border-top:1px solid var(--line);}
+  footer{text-align:center;padding:16px 12px calc(env(safe-area-inset-bottom) + 16px);color:var(--ink-soft);font-size:15px;border-top:1px solid var(--line);}
   footer a{color:var(--c-people);font-weight:700;text-decoration:none;}
-  footer .center{display:block;margin-top:4px;font-size:11.5px;opacity:.85;}
+  footer .center{display:block;margin-top:4px;font-size:13px;opacity:.85;}
 
   @media(max-width:380px){.grid{grid-template-columns:repeat(2,1fr);}.brand .title small{display:none;}}
 </style>
@@ -320,6 +320,18 @@ const DEFAULT_CARDS = [
   {id:"w10",cat:"wants",emoji:"🔒",t:{az:"Bağla",ru:"Закрой",en:"Close"}},
   {id:"w11",cat:"wants",emoji:"⏳",t:{az:"Gözlə",ru:"Подожди",en:"Wait"}},
   {id:"w12",cat:"wants",emoji:"🤗",t:{az:"Gəl",ru:"Иди сюда",en:"Come here"}},
+  {id:"w13",cat:"wants",emoji:"➖",t:{az:"Daha az",ru:"Меньше",en:"Less"}},
+  {id:"w14",cat:"wants",emoji:"⏩",t:{az:"Tez",ru:"Быстрее",en:"Faster"}},
+  {id:"w15",cat:"wants",emoji:"🐢",t:{az:"Yavaş",ru:"Медленнее",en:"Slower"}},
+  {id:"w16",cat:"wants",emoji:"🔄",t:{az:"Mənim növbəm",ru:"Моя очередь",en:"My turn"}},
+  {id:"w17",cat:"wants",emoji:"📍",t:{az:"Burada",ru:"Здесь",en:"Here"}},
+  {id:"w18",cat:"wants",emoji:"👆",t:{az:"Orada",ru:"Там",en:"There"}},
+  {id:"w19",cat:"wants",emoji:"🤝",t:{az:"Birlikdə",ru:"Вместе",en:"Together"}},
+  {id:"w20",cat:"wants",emoji:"🧍",t:{az:"Tək",ru:"Один",en:"Alone"}},
+  {id:"w21",cat:"wants",emoji:"🤏",t:{az:"Bir az",ru:"Немного",en:"A little"}},
+  {id:"w22",cat:"wants",emoji:"💯",t:{az:"Hamısı",ru:"Всё",en:"All"}},
+  {id:"w23",cat:"wants",emoji:"🔁",t:{az:"Yenidən",ru:"Снова",en:"Again"}},
+  {id:"w24",cat:"wants",emoji:"🫳",t:{az:"Aşağı qoy",ru:"Положи",en:"Put down"}},
   // Yemək/İçki (12)
   {id:"f1",cat:"food",emoji:"💧",t:{az:"Su",ru:"Вода",en:"Water"}},
   {id:"f2",cat:"food",emoji:"🍽️",t:{az:"Yemək",ru:"Еда",en:"Food"}},
@@ -333,6 +345,18 @@ const DEFAULT_CARDS = [
   {id:"f10",cat:"food",emoji:"🧀",t:{az:"Pendir",ru:"Сыр",en:"Cheese"}},
   {id:"f11",cat:"food",emoji:"☕",t:{az:"Çay",ru:"Чай",en:"Tea"}},
   {id:"f12",cat:"food",emoji:"🍦",t:{az:"Dondurma",ru:"Мороженое",en:"Ice cream"}},
+  {id:"f13",cat:"food",emoji:"🍚",t:{az:"Düyü",ru:"Рис",en:"Rice"}},
+  {id:"f14",cat:"food",emoji:"🍝",t:{az:"Makaron",ru:"Макароны",en:"Pasta"}},
+  {id:"f15",cat:"food",emoji:"🍲",t:{az:"Şorba",ru:"Суп",en:"Soup"}},
+  {id:"f16",cat:"food",emoji:"🥩",t:{az:"Ət",ru:"Мясо",en:"Meat"}},
+  {id:"f17",cat:"food",emoji:"🍗",t:{az:"Toyuq",ru:"Курица",en:"Chicken"}},
+  {id:"f18",cat:"food",emoji:"🐟",t:{az:"Balıq",ru:"Рыба",en:"Fish"}},
+  {id:"f19",cat:"food",emoji:"🍅",t:{az:"Pomidor",ru:"Помидор",en:"Tomato"}},
+  {id:"f20",cat:"food",emoji:"🥕",t:{az:"Yerkökü",ru:"Морковь",en:"Carrot"}},
+  {id:"f21",cat:"food",emoji:"🍇",t:{az:"Üzüm",ru:"Виноград",en:"Grapes"}},
+  {id:"f22",cat:"food",emoji:"🍊",t:{az:"Portağal",ru:"Апельсин",en:"Orange"}},
+  {id:"f23",cat:"food",emoji:"🍫",t:{az:"Şokolad",ru:"Шоколад",en:"Chocolate"}},
+  {id:"f24",cat:"food",emoji:"🍬",t:{az:"Konfet",ru:"Конфета",en:"Candy"}},
   // Hisslər (12)
   {id:"e1",cat:"feelings",emoji:"😊",t:{az:"Xoşbəxt",ru:"Счастлив",en:"Happy"}},
   {id:"e2",cat:"feelings",emoji:"😢",t:{az:"Kədərli",ru:"Грустно",en:"Sad"}},
@@ -346,6 +370,18 @@ const DEFAULT_CARDS = [
   {id:"e10",cat:"feelings",emoji:"😔",t:{az:"Darıxmışam",ru:"Скучно",en:"Bored"}},
   {id:"e11",cat:"feelings",emoji:"😳",t:{az:"Utanıram",ru:"Стесняюсь",en:"Shy"}},
   {id:"e12",cat:"feelings",emoji:"😂",t:{az:"Gülürəm",ru:"Смеюсь",en:"Laughing"}},
+  {id:"e13",cat:"feelings",emoji:"😟",t:{az:"Narahat",ru:"Тревожно",en:"Worried"}},
+  {id:"e14",cat:"feelings",emoji:"😭",t:{az:"Ağlayıram",ru:"Плачу",en:"Crying"}},
+  {id:"e15",cat:"feelings",emoji:"😤",t:{az:"Hirsliyəm",ru:"Раздражён",en:"Frustrated"}},
+  {id:"e16",cat:"feelings",emoji:"😖",t:{az:"Çətindir",ru:"Трудно",en:"It's hard"}},
+  {id:"e17",cat:"feelings",emoji:"🥱",t:{az:"Yuxum gəlir",ru:"Хочу спать",en:"Sleepy"}},
+  {id:"e18",cat:"feelings",emoji:"😍",t:{az:"Çox sevindim",ru:"Очень рад",en:"So glad"}},
+  {id:"e19",cat:"feelings",emoji:"😐",t:{az:"Normal",ru:"Нормально",en:"Okay"}},
+  {id:"e20",cat:"feelings",emoji:"🤨",t:{az:"Maraqlıdır",ru:"Интересно",en:"Curious"}},
+  {id:"e21",cat:"feelings",emoji:"😮",t:{az:"Təəccübləndim",ru:"Удивлён",en:"Surprised"}},
+  {id:"e22",cat:"feelings",emoji:"😬",t:{az:"Çaşmışam",ru:"Неловко",en:"Awkward"}},
+  {id:"e23",cat:"feelings",emoji:"🥲",t:{az:"Kövrəldim",ru:"Растрогался",en:"Touched"}},
+  {id:"e24",cat:"feelings",emoji:"😇",t:{az:"Minnətdaram",ru:"Благодарен",en:"Grateful"}},
   // İnsanlar (12)
   {id:"p1",cat:"people",emoji:"👩",t:{az:"Ana",ru:"Мама",en:"Mom"}},
   {id:"p2",cat:"people",emoji:"👨",t:{az:"Ata",ru:"Папа",en:"Dad"}},
@@ -359,6 +395,18 @@ const DEFAULT_CARDS = [
   {id:"p10",cat:"people",emoji:"👦",t:{az:"Qardaş",ru:"Брат",en:"Brother"}},
   {id:"p11",cat:"people",emoji:"🫵",t:{az:"Sən",ru:"Ты",en:"You"}},
   {id:"p12",cat:"people",emoji:"👨‍👩‍👧‍👦",t:{az:"Biz",ru:"Мы",en:"We"}},
+  {id:"p13",cat:"people",emoji:"👶",t:{az:"Körpə",ru:"Малыш",en:"Baby"}},
+  {id:"p14",cat:"people",emoji:"👪",t:{az:"Ailə",ru:"Семья",en:"Family"}},
+  {id:"p15",cat:"people",emoji:"🧑‍⚕️",t:{az:"Tibb bacısı",ru:"Медсестра",en:"Nurse"}},
+  {id:"p16",cat:"people",emoji:"👮",t:{az:"Polis",ru:"Полицейский",en:"Police"}},
+  {id:"p17",cat:"people",emoji:"👨‍👩‍👧",t:{az:"Valideyn",ru:"Родители",en:"Parents"}},
+  {id:"p18",cat:"people",emoji:"🧑",t:{az:"Böyük",ru:"Взрослый",en:"Grown-up"}},
+  {id:"p19",cat:"people",emoji:"🧒",t:{az:"Uşaq",ru:"Ребёнок",en:"Child"}},
+  {id:"p20",cat:"people",emoji:"👫",t:{az:"Dostlar",ru:"Друзья",en:"Friends"}},
+  {id:"p21",cat:"people",emoji:"🧑‍🏫",t:{az:"Tərbiyəçi",ru:"Воспитатель",en:"Caregiver"}},
+  {id:"p22",cat:"people",emoji:"👩‍🍳",t:{az:"Aşpaz",ru:"Повар",en:"Cook"}},
+  {id:"p23",cat:"people",emoji:"🏘️",t:{az:"Qonşu",ru:"Сосед",en:"Neighbor"}},
+  {id:"p24",cat:"people",emoji:"👯",t:{az:"Hamı",ru:"Все",en:"Everyone"}},
   // Fəaliyyətlər (12)
   {id:"a1",cat:"activities",emoji:"🧸",t:{az:"Oynamaq",ru:"Играть",en:"Play"}},
   {id:"a2",cat:"activities",emoji:"🛏️",t:{az:"Yatmaq",ru:"Спать",en:"Sleep"}},
@@ -372,6 +420,18 @@ const DEFAULT_CARDS = [
   {id:"a10",cat:"activities",emoji:"🏃",t:{az:"Qaçmaq",ru:"Бегать",en:"Run"}},
   {id:"a11",cat:"activities",emoji:"✏️",t:{az:"Yazmaq",ru:"Писать",en:"Write"}},
   {id:"a12",cat:"activities",emoji:"📱",t:{az:"Telefon",ru:"Телефон",en:"Phone"}},
+  {id:"a13",cat:"activities",emoji:"🧩",t:{az:"Pazl",ru:"Пазл",en:"Puzzle"}},
+  {id:"a14",cat:"activities",emoji:"⚽",t:{az:"Top oynamaq",ru:"Играть в мяч",en:"Ball"}},
+  {id:"a15",cat:"activities",emoji:"🚲",t:{az:"Velosiped",ru:"Велосипед",en:"Bike"}},
+  {id:"a16",cat:"activities",emoji:"🏊",t:{az:"Üzmək",ru:"Плавать",en:"Swim"}},
+  {id:"a17",cat:"activities",emoji:"🎤",t:{az:"Mahnı oxumaq",ru:"Петь",en:"Sing"}},
+  {id:"a18",cat:"activities",emoji:"🧱",t:{az:"Qurmaq",ru:"Строить",en:"Build"}},
+  {id:"a19",cat:"activities",emoji:"✂️",t:{az:"Kəsmək",ru:"Резать",en:"Cut"}},
+  {id:"a20",cat:"activities",emoji:"🍳",t:{az:"Bişirmək",ru:"Готовить",en:"Cook"}},
+  {id:"a21",cat:"activities",emoji:"🧹",t:{az:"Yığışdırmaq",ru:"Убирать",en:"Tidy up"}},
+  {id:"a22",cat:"activities",emoji:"🪥",t:{az:"Diş fırçalamaq",ru:"Чистить зубы",en:"Brush teeth"}},
+  {id:"a23",cat:"activities",emoji:"👏",t:{az:"Əl çalmaq",ru:"Хлопать",en:"Clap"}},
+  {id:"a24",cat:"activities",emoji:"🤸",t:{az:"İdman",ru:"Зарядка",en:"Exercise"}},
   // Bədən/Ağrı (12)
   {id:"b1",cat:"body",emoji:"😣",t:{az:"Ağrıyır",ru:"Болит",en:"It hurts"}},
   {id:"b2",cat:"body",emoji:"🤕",t:{az:"Baş",ru:"Голова",en:"Head"}},
@@ -385,6 +445,18 @@ const DEFAULT_CARDS = [
   {id:"b10",cat:"body",emoji:"👂",t:{az:"Qulaq",ru:"Ухо",en:"Ear"}},
   {id:"b11",cat:"body",emoji:"🤧",t:{az:"Boğaz",ru:"Горло",en:"Throat"}},
   {id:"b12",cat:"body",emoji:"🤮",t:{az:"Ürəyim bulanır",ru:"Тошнит",en:"Nausea"}},
+  {id:"b13",cat:"body",emoji:"💪",t:{az:"Qol",ru:"Плечо",en:"Arm"}},
+  {id:"b14",cat:"body",emoji:"🦶",t:{az:"Pəncə",ru:"Стопа",en:"Foot"}},
+  {id:"b15",cat:"body",emoji:"🫀",t:{az:"Ürək",ru:"Сердце",en:"Heart"}},
+  {id:"b16",cat:"body",emoji:"🤚",t:{az:"Barmaq",ru:"Палец",en:"Finger"}},
+  {id:"b17",cat:"body",emoji:"👅",t:{az:"Dil",ru:"Язык",en:"Tongue"}},
+  {id:"b18",cat:"body",emoji:"👃",t:{az:"Burun",ru:"Нос",en:"Nose"}},
+  {id:"b19",cat:"body",emoji:"💇",t:{az:"Saç",ru:"Волосы",en:"Hair"}},
+  {id:"b20",cat:"body",emoji:"🩹",t:{az:"Yara",ru:"Рана",en:"Wound"}},
+  {id:"b21",cat:"body",emoji:"🌡️",t:{az:"Qızdırma",ru:"Температура",en:"Fever"}},
+  {id:"b22",cat:"body",emoji:"😮‍💨",t:{az:"Nəfəs",ru:"Дыхание",en:"Breathing"}},
+  {id:"b23",cat:"body",emoji:"🩺",t:{az:"Müayinə",ru:"Осмотр",en:"Check-up"}},
+  {id:"b24",cat:"body",emoji:"💊",t:{az:"Dərman",ru:"Лекарство",en:"Medicine"}},
   // Hə/Yox (12)
   {id:"y1",cat:"yesno",emoji:"✅",t:{az:"Hə",ru:"Да",en:"Yes"}},
   {id:"y2",cat:"yesno",emoji:"❌",t:{az:"Yox",ru:"Нет",en:"No"}},
@@ -398,6 +470,18 @@ const DEFAULT_CARDS = [
   {id:"y10",cat:"yesno",emoji:"👍",t:{az:"Bəyənirəm",ru:"Нравится",en:"I like it"}},
   {id:"y11",cat:"yesno",emoji:"👎",t:{az:"Bəyənmirəm",ru:"Не нравится",en:"I don't like it"}},
   {id:"y12",cat:"yesno",emoji:"👌",t:{az:"Tamam",ru:"Хорошо",en:"OK"}},
+  {id:"y13",cat:"yesno",emoji:"🤝",t:{az:"Razıyam",ru:"Согласен",en:"I agree"}},
+  {id:"y14",cat:"yesno",emoji:"🙅",t:{az:"Razı deyiləm",ru:"Не согласен",en:"I disagree"}},
+  {id:"y15",cat:"yesno",emoji:"⏸️",t:{az:"Birazdan",ru:"Попозже",en:"Later"}},
+  {id:"y16",cat:"yesno",emoji:"⏰",t:{az:"İndi",ru:"Сейчас",en:"Now"}},
+  {id:"y17",cat:"yesno",emoji:"❓",t:{az:"Niyə?",ru:"Почему?",en:"Why?"}},
+  {id:"y18",cat:"yesno",emoji:"❔",t:{az:"Necə?",ru:"Как?",en:"How?"}},
+  {id:"y19",cat:"yesno",emoji:"📍",t:{az:"Hara?",ru:"Где?",en:"Where?"}},
+  {id:"y20",cat:"yesno",emoji:"🕐",t:{az:"Nə vaxt?",ru:"Когда?",en:"When?"}},
+  {id:"y21",cat:"yesno",emoji:"🙋",t:{az:"Mən bilirəm",ru:"Я знаю",en:"I know"}},
+  {id:"y22",cat:"yesno",emoji:"😕",t:{az:"Başa düşmədim",ru:"Не понял",en:"I don't understand"}},
+  {id:"y23",cat:"yesno",emoji:"🔁",t:{az:"Təkrar et",ru:"Повтори",en:"Repeat"}},
+  {id:"y24",cat:"yesno",emoji:"🤫",t:{az:"Sakit",ru:"Тихо",en:"Quiet"}},
   // Cümlələr (20 hazır qısa cümlə)
   {id:"s1",cat:"sentences",emoji:"🍽️",t:{az:"Mən acam",ru:"Я голоден",en:"I am hungry"}},
   {id:"s2",cat:"sentences",emoji:"💧",t:{az:"Susamışam",ru:"Я хочу пить",en:"I am thirsty"}},
@@ -418,7 +502,19 @@ const DEFAULT_CARDS = [
   {id:"s17",cat:"sentences",emoji:"🛏️",t:{az:"Yatmaq istəyirəm",ru:"Хочу спать",en:"I want to sleep"}},
   {id:"s18",cat:"sentences",emoji:"❓",t:{az:"Bu nədir?",ru:"Что это?",en:"What is this?"}},
   {id:"s19",cat:"sentences",emoji:"✅",t:{az:"Mən hazıram",ru:"Я готов",en:"I am ready"}},
-  {id:"s20",cat:"sentences",emoji:"✋",t:{az:"Daha istəmirəm",ru:"Больше не хочу",en:"No more"}}
+  {id:"s20",cat:"sentences",emoji:"✋",t:{az:"Daha istəmirəm",ru:"Больше не хочу",en:"No more"}},
+  {id:"s21",cat:"sentences",emoji:"🤲",t:{az:"Zəhmət olmasa kömək et",ru:"Помоги, пожалуйста",en:"Please help me"}},
+  {id:"s22",cat:"sentences",emoji:"🚻",t:{az:"Tualetə getməliyəm",ru:"Мне нужно в туалет",en:"I need the toilet"}},
+  {id:"s23",cat:"sentences",emoji:"🥤",t:{az:"Su içmək istəyirəm",ru:"Хочу попить воды",en:"I want to drink water"}},
+  {id:"s24",cat:"sentences",emoji:"🍎",t:{az:"Yemək istəyirəm",ru:"Хочу есть",en:"I want to eat"}},
+  {id:"s25",cat:"sentences",emoji:"😢",t:{az:"Kefim yoxdur",ru:"Мне грустно",en:"I feel sad"}},
+  {id:"s26",cat:"sentences",emoji:"😊",t:{az:"Çox şadam",ru:"Я очень рад",en:"I am very happy"}},
+  {id:"s27",cat:"sentences",emoji:"🤕",t:{az:"Bir yerim ağrıyır",ru:"Мне больно",en:"It hurts"}},
+  {id:"s28",cat:"sentences",emoji:"🧸",t:{az:"Bununla oynamaq istəyirəm",ru:"Хочу поиграть с этим",en:"I want to play with this"}},
+  {id:"s29",cat:"sentences",emoji:"🌳",t:{az:"Gəzməyə getmək istəyirəm",ru:"Хочу пойти гулять",en:"I want to go for a walk"}},
+  {id:"s30",cat:"sentences",emoji:"🤔",t:{az:"Başa düşmürəm",ru:"Я не понимаю",en:"I don't understand"}},
+  {id:"s31",cat:"sentences",emoji:"🙏",t:{az:"Zəhmət olmasa, gözlə",ru:"Подожди, пожалуйста",en:"Please wait"}},
+  {id:"s32",cat:"sentences",emoji:"❤️",t:{az:"Sən çox yaxşısan",ru:"Ты очень хороший",en:"You are very kind"}}
 ];
 
 const EMOJIS = "🙂 😀 😄 😍 🥰 😢 😭 😠 😡 😨 😴 🤒 🤕 🤢 🥵 🥶 😎 🤔 🙃 😜 🤗 😱 ❤️ 💛 💚 💙 💜 🧡 🤍 ⭐ ✨ 🌟 👍 👎 👌 ✋ 🤚 🙏 🤲 👏 🙌 💪 👀 👂 👃 👄 🦷 👶 🧒 👦 👧 🧑 👨 👩 🧓 👴 👵 👨‍🏫 👩‍🏫 👨‍⚕️ 👩‍⚕️ 👮 🍎 🍌 🍇 🍓 🍉 🍊 🍋 🍐 🍑 🍒 🥝 🍅 🥕 🌽 🥔 🍞 🥐 🧀 🥚 🍳 🥞 🍗 🍖 🌭 🍔 🍟 🍕 🥪 🌮 🥗 🍝 🍜 🍲 🍣 🍙 🍚 🍦 🍰 🎂 🍪 🍫 🍬 🍭 🍯 🥛 🧃 ☕ 🧋 🥤 💧 🍼 🛏️ 🛀 🚿 🚽 🪥 🧼 🧸 🎈 🎉 🎁 🎀 🎨 🖍️ ✏️ 📚 📖 📕 📗 📘 📝 🔢 🎵 🎶 🎸 🥁 🎹 🎤 🎧 📺 📱 💻 🎮 🧩 🚗 🚕 🚌 🚲 🛴 ✈️ 🚂 ⛵ 🚀 🏠 🏫 🏥 🌳 🌲 🌸 🌼 🌻 🌈 ☀️ 🌙 🔥 🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🐔 🐤 🦋 🐢 🐠 🐳 🦄 ✅ ❌ ⭕ 🛑 ⏰ 📅 🔔 💤 🆘 ➕ ➖".trim().split(/\s+/);
