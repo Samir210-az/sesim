@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://samir210-az.github.io/sesim/sitemap.xml
